@@ -8,7 +8,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import javax.swing.*;
 
-public class Game extends JFrame implements MouseListener {
+public class Minefield extends JFrame implements MouseListener {
 
 	private static final long serialVersionUID = 1L;
 	private Container mines = null;
@@ -17,7 +17,7 @@ public class Game extends JFrame implements MouseListener {
 	private int cells[][] = new int[rows][cols];
 	private boolean shown[][] = new boolean[rows][cols];
 
-	public Game(){
+	public Minefield(){
 		super("Minesweeper");
 		startGame();
 	}
@@ -29,9 +29,6 @@ public class Game extends JFrame implements MouseListener {
 		mines = this.getContentPane();
 		GridBagLayout gridBag = new GridBagLayout();
 		GridBagConstraints c = new GridBagConstraints();
-		
-		c.fill = GridBagConstraints.NONE;
-		
 		mines.setLayout(gridBag);
 		
 		for (int row = 0; row < rows; row++) {
@@ -53,7 +50,6 @@ public class Game extends JFrame implements MouseListener {
 				
 				c.gridx = row;
 				c.gridy = col;
-				gridBag.setConstraints(buttons[row][col], c);
 				mines.add(buttons[row][col], c);
 				
 				cells[row][col] = bombCount(row, col);
@@ -110,10 +106,4 @@ public class Game extends JFrame implements MouseListener {
 		// TODO Auto-generated method stub
 
 	}
-
-	public static void main(String[] args) {
-		@SuppressWarnings("unused")
-		Game start = new Game();
-	}
-
 }
