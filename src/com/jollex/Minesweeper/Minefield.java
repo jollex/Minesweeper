@@ -18,10 +18,10 @@ public class Minefield extends JPanel implements MouseListener {
 	private boolean shown[][] = new boolean[rows][cols];
 
 	public Minefield() {
-		startGame();
+		setUp();
 	}
 	
-	private void startGame() {
+	private void setUp() {
 		this.setSize(128, 128);
 		
 		mines = this;
@@ -56,8 +56,6 @@ public class Minefield extends JPanel implements MouseListener {
 		}
 		
 		this.setVisible(true);
-		this.validate();
-		this.repaint();
 	}
 	
 	private int bombCount(int x, int y){
