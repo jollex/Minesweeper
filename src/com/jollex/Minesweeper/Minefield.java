@@ -8,7 +8,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import javax.swing.*;
 
-public class Minefield extends JFrame implements MouseListener {
+public class Minefield extends JPanel implements MouseListener {
 
 	private static final long serialVersionUID = 1L;
 	private Container mines = null;
@@ -17,16 +17,14 @@ public class Minefield extends JFrame implements MouseListener {
 	private int cells[][] = new int[rows][cols];
 	private boolean shown[][] = new boolean[rows][cols];
 
-	public Minefield(){
-		super("Minesweeper");
+	public Minefield() {
 		startGame();
 	}
 	
 	private void startGame() {
-		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		this.setSize(148, 184);
+		this.setSize(128, 128);
 		
-		mines = this.getContentPane();
+		mines = this;
 		GridBagLayout gridBag = new GridBagLayout();
 		GridBagConstraints c = new GridBagConstraints();
 		mines.setLayout(gridBag);
