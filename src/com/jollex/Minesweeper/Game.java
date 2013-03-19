@@ -5,7 +5,6 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.Container;
 import java.awt.GridLayout;
-
 import javax.swing.*;
 
 public class Game extends JFrame implements MouseListener {
@@ -16,7 +15,6 @@ public class Game extends JFrame implements MouseListener {
 	private JToggleButton buttons[][] = new JToggleButton[rows][cols];
 	private int cells[][] = new int[rows][cols];
 	private boolean shown[][] = new boolean[rows][cols];
-	private ImageIcon blank = new ImageIcon("images/blank.gif");
 
 	public Game(){
 		super("Minesweeper");
@@ -33,8 +31,11 @@ public class Game extends JFrame implements MouseListener {
 		for (int row = 0; row < rows; row++) {
 			for (int col = 0; col < cols; col++) {
 				//Populate minefield
-				buttons[row][col] = new JToggleButton(blank);
-				buttons[row][col].setSize(16, 16);
+				buttons[row][col] = new JToggleButton();
+				buttons[row][col].setIcon(new javax.swing.ImageIcon(getClass().getResource("images/blank.gif")));
+				buttons[row][col].setBorderPainted(false);
+				buttons[row][col].setFocusPainted(false);
+				buttons[row][col].setContentAreaFilled(false);
 				
 				buttons[row][col].addMouseListener(new java.awt.event.MouseAdapter() {
 					public void mouseReleased(java.awt.event.MouseEvent e) {
