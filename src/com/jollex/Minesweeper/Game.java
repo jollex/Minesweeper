@@ -4,7 +4,8 @@ import java.awt.event.InputEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.Container;
-import java.awt.GridLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import javax.swing.*;
 
 public class Game extends JFrame implements MouseListener {
@@ -26,16 +27,19 @@ public class Game extends JFrame implements MouseListener {
 		this.setSize(148, 184);
 		
 		mines = this.getContentPane();
-		mines.setLayout(new GridLayout(rows, cols));
+		GridBagLayout gridBag = new GridBagLayout();
+		GridBagConstraints c = new GridBagConstraints();
+		
+		c.fill = GridBagConstraints.NONE;
+		
+		mines.setLayout(gridBag);
 		
 		for (int row = 0; row < rows; row++) {
 			for (int col = 0; col < cols; col++) {
-				//Populate minefield
+				//Populate mine field
 				buttons[row][col] = new JToggleButton();
 				buttons[row][col].setIcon(new javax.swing.ImageIcon(getClass().getResource("images/blank.gif")));
-				buttons[row][col].setBorderPainted(false);
-				buttons[row][col].setFocusPainted(false);
-				buttons[row][col].setContentAreaFilled(false);
+				buttons[row][col].setBorder(BorderFactory.createEmptyBorder());
 				
 				buttons[row][col].addMouseListener(new java.awt.event.MouseAdapter() {
 					public void mouseReleased(java.awt.event.MouseEvent e) {
@@ -47,7 +51,10 @@ public class Game extends JFrame implements MouseListener {
 					}
 				});
 				
-				mines.add(buttons[row][col]);
+				c.gridx = row;
+				c.gridy = col;
+				gridBag.setConstraints(buttons[row][col], c);
+				mines.add(buttons[row][col], c);
 				
 				cells[row][col] = bombCount(row, col);
 				shown[row][col] = false;
