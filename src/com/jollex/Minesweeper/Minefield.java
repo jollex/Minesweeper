@@ -21,14 +21,18 @@ public class Minefield extends JPanel implements MouseListener {
 		setUp();
 	}
 	
+	//Sets up the minefield
 	private void setUp() {
+		//Sets the size of the minefield
 		this.setSize(128, 128);
 		
+		//Sets the JPanel to use GridBagLayout
 		mines = this;
 		GridBagLayout gridBag = new GridBagLayout();
 		GridBagConstraints c = new GridBagConstraints();
 		mines.setLayout(gridBag);
 		
+		//Populates the buttons array with JToggleButtons, sets them to the blank.gif icon, and adds them to the panel
 		for (int row = 0; row < rows; row++) {
 			for (int col = 0; col < cols; col++) {
 				//Populate mine field
@@ -58,6 +62,7 @@ public class Minefield extends JPanel implements MouseListener {
 		this.setVisible(true);
 	}
 	
+	//Returns the amount of bombs around a cell
 	private int bombCount(int x, int y){
 		int bombCount = 0;
 		for(int row = -1; row <= 1; row++){

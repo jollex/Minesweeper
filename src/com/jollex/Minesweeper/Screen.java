@@ -24,14 +24,16 @@ public class Screen extends JFrame {
 	}
 	
 	private void setUp() {
+		//Sets up frame
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 		this.setSize(148, 184);
 		
+		//Sets frame to use GridBagLayout
 		GridBagLayout gridBag = new GridBagLayout();
 		GridBagConstraints c = new GridBagConstraints();
 		this.setLayout(gridBag);
 		
-		//Load pictures
+		//Load borders
 		topLeft = new JLabel();
 		topLeft.setIcon(new javax.swing.ImageIcon(getClass().getResource("images/bordertl.gif")));
 		topRight = new JLabel();
@@ -49,11 +51,13 @@ public class Screen extends JFrame {
 		side = new JLabel();
 		side.setIcon(new javax.swing.ImageIcon(getClass().getResource("images/borderlr.gif")));
 		
+		//Adds the controls panel to the frame
 		Controls control = new Controls();
 		c.gridx = 0;
 		c.gridy = 0;
 		this.add(control, c);
 		
+		//Adds the minefield panel to the frame
 		Minefield field = new Minefield();
 		c.gridx = 0;
 		c.gridy = 1;

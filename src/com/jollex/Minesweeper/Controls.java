@@ -3,28 +3,20 @@ package com.jollex.Minesweeper;
 import java.awt.Container;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.InputEvent;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-
+import java.awt.event.*;
 import javax.swing.*;
 
 public class Controls extends JPanel implements MouseListener {
 
 	private static final long serialVersionUID = 1L;
 	private Container controlPanel = null;
-
 	private JLabel bombs1;
 	private JLabel bombs2;
 	private JLabel bombs3;
-	
 	private JLabel time1;
 	private JLabel time2;
 	private JLabel time3;
-	
-	private JToggleButton face;
+	private JButton face;
 	
 	private int time = 0;
 
@@ -32,6 +24,7 @@ public class Controls extends JPanel implements MouseListener {
 		setUp();
 	}
 	
+	//Create timer with an ActionListener
 	ActionListener updater = new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
@@ -45,8 +38,10 @@ public class Controls extends JPanel implements MouseListener {
 	Timer timer = new Timer(1000, updater);
 	
 	private void setUp() {
+		//Sets size of JPanel
 		this.setSize(128, 26);
 		
+		//Sets JPanel to use GridBagLayout
 		controlPanel = this;
 		GridBagLayout gridBag = new GridBagLayout();
 		GridBagConstraints c = new GridBagConstraints();
@@ -57,7 +52,7 @@ public class Controls extends JPanel implements MouseListener {
 		bombs1.setIcon(new javax.swing.ImageIcon(getClass().getResource("images/time0.gif")));
 		c.gridx = 0;
 		this.add(bombs1, c);
-		
+
 		bombs2 = new JLabel();
 		bombs2.setIcon(new javax.swing.ImageIcon(getClass().getResource("images/time1.gif")));
 		c.gridx = 1;
@@ -68,8 +63,8 @@ public class Controls extends JPanel implements MouseListener {
 		c.gridx = 2;
 		this.add(bombs3, c);
 		
-		//Load face picture
-		face = new JToggleButton();
+		//Load face button and adds ActionListener to it
+		face = new JButton();
 		face.setIcon(new javax.swing.ImageIcon(getClass().getResource("images/facesmile.gif")));
 		face.setBorder(BorderFactory.createEmptyBorder());
 		ActionListener faceClick = new ActionListener() {
@@ -100,14 +95,17 @@ public class Controls extends JPanel implements MouseListener {
 		c.gridx = 6;
 		this.add(time3, c);
 		
+		//Sets JFrame to be visible
 		this.setVisible(true);
 	}
 	
+	//Restarts the game
 	public void newGame() {
 		time = 0;
 		timer.start();
 	}
 	
+	//Updates the timer display with the given 3 digit integer.
 	public void updateTime(int time) {
 		int hundreds, tens, ones;
 		hundreds = time / 100;
@@ -139,14 +137,10 @@ public class Controls extends JPanel implements MouseListener {
 
 	@Override
 	public void mousePressed(MouseEvent e) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
-		// TODO Auto-generated method stub
-
 	}
 
 }
