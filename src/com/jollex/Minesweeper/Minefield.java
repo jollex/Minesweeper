@@ -6,6 +6,8 @@ import java.awt.event.MouseListener;
 import java.awt.Container;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.util.Random;
+
 import javax.swing.*;
 
 public class Minefield extends JPanel implements MouseListener {
@@ -14,8 +16,9 @@ public class Minefield extends JPanel implements MouseListener {
 	private Container mines = null;
 	private int rows = 8, cols = 8;
 	private JToggleButton buttons[][] = new JToggleButton[rows][cols];
-	private int cells[][] = new int[rows][cols];
+	private boolean[][] bomb = new boolean[rows][cols];
 	private boolean shown[][] = new boolean[rows][cols];
+	private final int BOMB_AMOUNT = 10;
 
 	public Minefield() {
 		setUp();
@@ -43,9 +46,9 @@ public class Minefield extends JPanel implements MouseListener {
 				buttons[row][col].addMouseListener(new java.awt.event.MouseAdapter() {
 					public void mouseReleased(java.awt.event.MouseEvent e) {
 						if (e.getModifiers() == InputEvent.BUTTON3_MASK) {
-							//markCell(e);
+							markCell(e);
 						} else if (e.getModifiers() == InputEvent.BUTTON1_MASK) {
-							//showCell(e);
+							showCell(e);
 						}
 					}
 				});
@@ -54,11 +57,12 @@ public class Minefield extends JPanel implements MouseListener {
 				c.gridy = col;
 				mines.add(buttons[row][col], c);
 				
-				cells[row][col] = bombCount(row, col);
+				bomb[row][col] = false;
 				shown[row][col] = false;
 			}
 		}
 		
+		createBombs();
 		this.setVisible(true);
 	}
 	
@@ -70,12 +74,73 @@ public class Minefield extends JPanel implements MouseListener {
 				int i = x + row;
 				int j = y + col;
  
-				if(i >= 0 && i < cells.length && j >= 0 && j < cells[i].length){
+				if(i >= 0 && i < bomb.length && j >= 0 && j < bomb[i].length && isBomb(i, j)) {
 					bombCount++;
 				}
 			}
 		}
 		return bombCount;
+	}
+	
+	private void createBombs() {
+		Random generator = new Random();
+		int bombs = 0;
+		
+		while (bombs < BOMB_AMOUNT) {
+			int r = generator.nextInt(rows);
+			int c = generator.nextInt(cols);
+			
+			if (!bomb[r][c]) {
+				bomb[r][c] = true;
+				bombs++;
+			}
+		}
+	}
+	
+	private void markCell(java.awt.event.MouseEvent e) {
+		JToggleButton button = (JToggleButton)e.getSource();
+		
+		ImageIcon blank = new javax.swing.ImageIcon(getClass().getResource("images/blank.gif"));
+		ImageIcon flag = new javax.swing.ImageIcon(getClass().getResource("images/bombflagged.gif"));
+		ImageIcon buttonIcon = (ImageIcon)button.getIcon();
+		
+		String buttonString = buttonIcon.toString();
+		String blankString = blank.toString();
+		String flagString = flag.toString();
+		
+		if (buttonString.equals(blankString)) {
+			button.setIcon(new javax.swing.ImageIcon(getClass().getResource("images/bombflagged.gif")));
+		} else if (buttonString.equals(flagString)) {
+			button.setIcon(new javax.swing.ImageIcon(getClass().getResource("images/blank.gif")));
+		}
+	}
+	
+	private void showCell(java.awt.event.MouseEvent e) {
+		JToggleButton button = (JToggleButton)e.getSource();
+		int row = button.getX() / 16;
+		int col = button.getY() / 16;
+		int bombAmount = bombCount(row, col);
+		
+		if (isBomb(row, col)) {
+			//endGame();
+			//disableBoard();
+		} else {
+			switch (bombAmount) {
+			case 0: button.setIcon(new javax.swing.ImageIcon(getClass().getResource("images/open0.gif"))); break;
+			case 1: button.setIcon(new javax.swing.ImageIcon(getClass().getResource("images/open1.gif"))); break;
+			case 2: button.setIcon(new javax.swing.ImageIcon(getClass().getResource("images/open2.gif"))); break;
+			case 3: button.setIcon(new javax.swing.ImageIcon(getClass().getResource("images/open3.gif"))); break;
+			case 4: button.setIcon(new javax.swing.ImageIcon(getClass().getResource("images/open4.gif"))); break;
+			case 5: button.setIcon(new javax.swing.ImageIcon(getClass().getResource("images/open5.gif"))); break;
+			case 6: button.setIcon(new javax.swing.ImageIcon(getClass().getResource("images/open6.gif"))); break;
+			case 7: button.setIcon(new javax.swing.ImageIcon(getClass().getResource("images/open7.gif"))); break;
+			case 8: button.setIcon(new javax.swing.ImageIcon(getClass().getResource("images/open8.gif"))); break;
+			}
+		}
+	}
+	
+	private boolean isBomb(int row, int col) {
+		return bomb[row][col];
 	}
 	
 	@Override

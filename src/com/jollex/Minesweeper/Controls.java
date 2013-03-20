@@ -19,6 +19,7 @@ public class Controls extends JPanel implements MouseListener {
 	private JButton face;
 	
 	private int time = 0;
+	private int bombsFlagged = 10;
 
 	public Controls() {
 		setUp();
@@ -115,6 +116,19 @@ public class Controls extends JPanel implements MouseListener {
 		time1.setIcon(new javax.swing.ImageIcon(getClass().getResource("images/time" + hundreds + ".gif")));
 		time2.setIcon(new javax.swing.ImageIcon(getClass().getResource("images/time" + tens + ".gif")));
 		time3.setIcon(new javax.swing.ImageIcon(getClass().getResource("images/time" + ones + ".gif")));
+	}
+	
+	public void updateCounter(int change) {
+		bombsFlagged += change;
+		
+		int hundreds, tens, ones;
+		hundreds = bombsFlagged / 100;
+		tens = (bombsFlagged % 100) / 10;
+		ones = ((bombsFlagged % 100) % 10);
+		
+		bombs1.setIcon(new javax.swing.ImageIcon(getClass().getResource("images/time" + hundreds + ".gif")));
+		bombs2.setIcon(new javax.swing.ImageIcon(getClass().getResource("images/time" + tens + ".gif")));
+		bombs3.setIcon(new javax.swing.ImageIcon(getClass().getResource("images/time" + ones + ".gif")));
 	}
 	
 	@Override
