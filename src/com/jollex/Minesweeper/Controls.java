@@ -3,13 +3,13 @@ package com.jollex.Minesweeper;
 import java.awt.Container;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.InputEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
-import javax.swing.BorderFactory;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JToggleButton;
+import javax.swing.*;
 
 public class Controls extends JPanel implements MouseListener {
 
@@ -25,10 +25,24 @@ public class Controls extends JPanel implements MouseListener {
 	private JLabel time3;
 	
 	private JToggleButton face;
+	
+	private int time = 0;
 
 	public Controls() {
 		setUp();
 	}
+	
+	ActionListener updater = new ActionListener() {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			if (time >= 999) {
+				timer.stop();
+			}
+			time++;
+			updateTime(time);
+		}
+	};
+	Timer timer = new Timer(1000, updater);
 	
 	private void setUp() {
 		this.setSize(128, 26);
@@ -58,6 +72,15 @@ public class Controls extends JPanel implements MouseListener {
 		face = new JToggleButton();
 		face.setIcon(new javax.swing.ImageIcon(getClass().getResource("images/facesmile.gif")));
 		face.setBorder(BorderFactory.createEmptyBorder());
+		ActionListener faceClick = new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (e.getModifiers() == InputEvent.BUTTON1_MASK) {
+					newGame();
+				}
+			}
+		};
+		face.addActionListener(faceClick);
 		c.gridx = 3;
 		this.add(face, c);
 		
@@ -78,7 +101,22 @@ public class Controls extends JPanel implements MouseListener {
 		this.add(time3, c);
 		
 		this.setVisible(true);
+	}
+	
+	public void newGame() {
+		time = 0;
+		timer.start();
+	}
+	
+	public void updateTime(int time) {
+		int hundreds, tens, ones;
+		hundreds = time / 100;
+		tens = (time % 100) / 10;
+		ones = ((time % 100) % 10);
 		
+		time1.setIcon(new javax.swing.ImageIcon(getClass().getResource("images/time" + hundreds + ".gif")));
+		time2.setIcon(new javax.swing.ImageIcon(getClass().getResource("images/time" + tens + ".gif")));
+		time3.setIcon(new javax.swing.ImageIcon(getClass().getResource("images/time" + ones + ".gif")));
 	}
 	
 	@Override
