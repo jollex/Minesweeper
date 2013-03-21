@@ -51,12 +51,6 @@ public class Screen extends JFrame {
 		side = new JLabel();
 		side.setIcon(new javax.swing.ImageIcon(getClass().getResource("images/borderlr.gif")));
 		
-		//Adds the controls panel to the frame
-		Controls control = new Controls();
-		c.gridx = 0;
-		c.gridy = 0;
-		this.add(control, c);
-		
 		//Adds the minefield panel to the frame
 		Minefield field = new Minefield();
 		c.gridx = 0;
