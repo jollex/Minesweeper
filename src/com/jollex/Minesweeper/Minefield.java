@@ -18,11 +18,13 @@ public class Minefield extends JPanel implements MouseListener {
 	private JLabel buttons[][] = new JLabel[rows][cols];
 	private boolean[][] bomb = new boolean[rows][cols];
 	private boolean shown[][] = new boolean[rows][cols];
+	private boolean marked[][] = new boolean[rows][cols];
+	private boolean flagged[][] = new boolean[rows][cols];
 	private final int BOMB_AMOUNT = 10;
 	private boolean gameStarted = false;
+	private int markedAmount = 0;
 	
 	private ImageIcon blank = new javax.swing.ImageIcon(getClass().getResource("images/blank.gif"));
-	private ImageIcon flag = new javax.swing.ImageIcon(getClass().getResource("images/bombflagged.gif"));
 	private ImageIcon bombFlagged = new javax.swing.ImageIcon(getClass().getResource("images/bombflagged.gif"));
 	private ImageIcon bombRevealed = new javax.swing.ImageIcon(getClass().getResource("images/bombrevealed.gif"));
 	private ImageIcon bombDeath = new javax.swing.ImageIcon(getClass().getResource("images/bombdeath.gif"));
@@ -57,7 +59,8 @@ public class Minefield extends JPanel implements MouseListener {
 							if (gameStarted == false) {
 								startGame(e);
 							}
-							showCell(e);
+							openCell(e);
+							openAllMarked();
 						}
 					}
 				});
@@ -66,6 +69,8 @@ public class Minefield extends JPanel implements MouseListener {
 				c.gridy = col;
 				mines.add(buttons[row][col], c);
 				
+				flagged[row][col] = false;
+				marked[row][col] = false;
 				bomb[row][col] = false;
 				shown[row][col] = false;
 			}
@@ -117,54 +122,64 @@ public class Minefield extends JPanel implements MouseListener {
 	
 	private void markCell(java.awt.event.MouseEvent e) {
 		JLabel button = (JLabel)e.getSource();
-		
-		ImageIcon buttonIcon = (ImageIcon)button.getIcon();
-		
-		String buttonString = buttonIcon.toString();
-		String blankString = blank.toString();
-		String flagString = flag.toString();
-		
-		if (buttonString.equals(blankString)) {
+		int row = button.getX() / 16;
+		int col = button.getY() / 16;
+
+		if (!flagged[row][col]) {
+			flagged[row][col] = true;
 			button.setIcon(bombFlagged);
-		} else if (buttonString.equals(flagString)) {
+		} else {
+			flagged[row][col] = false;
 			button.setIcon(blank);
 		}
 	}
+
 	
-	private void showCell(java.awt.event.MouseEvent e) {
+	private void openCell(java.awt.event.MouseEvent e) {
 		JLabel button = (JLabel)e.getSource();
 		int row = button.getX() / 16;
 		int col = button.getY() / 16;
 		int bombAmount = bombCount(row, col);
-		
 		if (isBomb(row, col)) {
 			endGame(row, col);
-			//disableBoard();
-		} else  if (bombAmount > 0){
+		} else {
+			buttons[row][col].setIcon(new javax.swing.ImageIcon(getClass().getResource("images/open" + bombAmount + ".gif")));
 			shown[row][col] = true;
-			button.setIcon(new javax.swing.ImageIcon(getClass().getResource("images/open" + bombAmount + ".gif")));
-		} else if (bombAmount == 0) {
-			shown[row][col] = true;
-			clearCells(row, col);
+			if (!isBomb(row, col) && (bombAmount == 0)) {
+				openNeighbors(row, col);
+			}
 		}
 	}
 	
-	private void clearCells(int row, int col) {
-		int bombAmount = bombCount(row, col);
-		
-		if (bombAmount == 0) {
-			buttons[row][col].setIcon(new javax.swing.ImageIcon(getClass().getResource("images/open0.gif")));
-			for (int x = -1; x <= 1; x++) {
-				for (int y = -1; y <= 1; y++) {
-					int i = x + row;
-					int j = y + col;
-					if (i >= 0 && i < buttons.length && j >= 0 && j < buttons[i].length) {
-						clearCells(i, j);	
+	private void openNeighbors(int row, int col) {
+		for (int i = row-1; i <= row+1; i++) {
+			for (int j = col-1; j <= col+1; j++) {
+				if (i >= 0 && i < buttons.length && j >= 0 && j < buttons[i].length) {
+					if (!shown[i][j] && !flagged[i][j]) {
+						markCellToOpen(i, j);
 					}
 				}
 			}
-		} else if (bombAmount > 0) {
-			buttons[row][col].setIcon(new javax.swing.ImageIcon(getClass().getResource("images/open" + bombAmount + ".gif")));
+		}
+	}
+	
+	private void markCellToOpen(int row, int col) {
+		markedAmount++;
+		marked[row][col] = true;
+	}
+	
+	private void openAllMarked() {
+		while (markedAmount > 0) {
+			markedAmount--;
+			for (int row = 0; row < rows; row++) {
+				for (int col = 0; col < cols; col++) {
+					if (marked[row][col] == true) {
+						int bombAmount = bombCount(row, col);
+						marked[row][col] = false;
+						buttons[row][col].setIcon(new javax.swing.ImageIcon(getClass().getResource("images/open" + bombAmount + ".gif")));
+					}
+				}
+			}
 		}
 	}
 	

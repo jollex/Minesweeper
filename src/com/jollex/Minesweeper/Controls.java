@@ -20,6 +20,9 @@ public class Controls extends JPanel implements MouseListener {
 	
 	private int time = 0;
 	private int bombsFlagged = 10;
+	
+	private ImageIcon faceOoh = new javax.swing.ImageIcon(getClass().getResource("images/faceooh.gif"));
+	private ImageIcon faceSmile = new javax.swing.ImageIcon(getClass().getResource("images/facesmile.gif"));
 
 	public Controls() {
 		setUp();
@@ -66,7 +69,7 @@ public class Controls extends JPanel implements MouseListener {
 		
 		//Load face button and adds ActionListener to it
 		face = new JButton();
-		face.setIcon(new javax.swing.ImageIcon(getClass().getResource("images/facesmile.gif")));
+		face.setIcon(faceSmile);
 		face.setBorder(BorderFactory.createEmptyBorder());
 		ActionListener faceClick = new ActionListener() {
 			@Override
@@ -151,10 +154,12 @@ public class Controls extends JPanel implements MouseListener {
 
 	@Override
 	public void mousePressed(MouseEvent e) {
+		face.setIcon(faceOoh);
 	}
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
+		face.setIcon(faceSmile);
 	}
 
 }
