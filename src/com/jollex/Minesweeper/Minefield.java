@@ -36,6 +36,7 @@ public class Minefield extends JPanel implements MouseListener {
 	private ImageIcon bombMisflagged = new javax.swing.ImageIcon(getClass().getResource("images/bombmisflagged.gif"));
 	private ImageIcon faceOoh = new javax.swing.ImageIcon(getClass().getResource("images/faceooh.gif"));
 	private ImageIcon faceSmile = new javax.swing.ImageIcon(getClass().getResource("images/facesmile.gif"));
+	private ImageIcon faceWin = new javax.swing.ImageIcon(getClass().getResource("images/facewin.gif"));
 	private ImageIcon bordertb = new javax.swing.ImageIcon(getClass().getResource("images/bordertb.gif"));
 	
 	private JPanel border = null;
@@ -110,6 +111,7 @@ public class Minefield extends JPanel implements MouseListener {
 						face.setIcon(faceOoh);
 					}
 					public void mouseReleased(java.awt.event.MouseEvent e) {
+						face.setIcon(faceSmile);
 						if (e.getModifiers() == InputEvent.BUTTON3_MASK) {
 							if (gameStarted == true) {
 								markCell(e);
@@ -121,7 +123,6 @@ public class Minefield extends JPanel implements MouseListener {
 							openCell(e);
 							openAllMarked();
 						}
-						face.setIcon(faceSmile);
 					}
 				});
 				
@@ -185,6 +186,7 @@ public class Minefield extends JPanel implements MouseListener {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				if (e.getModifiers() == InputEvent.BUTTON1_MASK) {
+					face.setIcon(faceSmile);
 					gameStarted = false;
 					time = 0;
 					timer.stop();
@@ -238,23 +240,6 @@ public class Minefield extends JPanel implements MouseListener {
 				marked[row][col] = false;
 				bomb[row][col] = false;
 				shown[row][col] = false;
-				
-				buttons[row][col].addMouseListener(new java.awt.event.MouseAdapter() {
-					public void mouseReleased(java.awt.event.MouseEvent e) {
-						if (e.getModifiers() == InputEvent.BUTTON3_MASK) {
-							if (gameStarted == true) {
-								markCell(e);
-							}
-						} else if (e.getModifiers() == InputEvent.BUTTON1_MASK) {
-							if (gameStarted == false) {
-								startGame(e);
-								timer.start();
-							}
-							openCell(e);
-							openAllMarked();
-						}
-					}
-				});
 			}
 		}
 	}
@@ -359,7 +344,7 @@ public class Minefield extends JPanel implements MouseListener {
 				openNeighbors(row, col);
 			}
 		}
-		if (openCells + BOMB_AMOUNT - 1 >= maxCells) {
+		if (openCells + BOMB_AMOUNT == maxCells) {
 			win();
 		}
 	}
@@ -416,6 +401,10 @@ public class Minefield extends JPanel implements MouseListener {
 	
 	private void win() {
 		timer.stop();
+		face.setIcon(faceWin);
+		bombsFlagged = 0;
+		setCounter(0);
+		
 		for (int row = 0; row < rows; row++) {
 			for (int col = 0; col < cols; col++) {
 				if (bomb[row][col]) {
