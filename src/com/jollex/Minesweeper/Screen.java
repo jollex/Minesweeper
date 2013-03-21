@@ -9,11 +9,13 @@ public class Screen extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 	
+	//Panels are created for each border
 	private JPanel topBorder;
 	private JPanel leftBorder;
 	private JPanel rightBorder;
 	private JPanel bottomBorder;
 	
+	//All border images are loaded
 	private ImageIcon bordertl = new javax.swing.ImageIcon(getClass().getResource("images/bordertl.gif"));
 	private ImageIcon bordertb = new javax.swing.ImageIcon(getClass().getResource("images/bordertb.gif"));
 	private ImageIcon bordertr = new javax.swing.ImageIcon(getClass().getResource("images/bordertr.gif"));
@@ -23,12 +25,14 @@ public class Screen extends JFrame {
 	private ImageIcon borderbl = new javax.swing.ImageIcon(getClass().getResource("images/borderbl.gif"));
 	private ImageIcon borderbr = new javax.swing.ImageIcon(getClass().getResource("images/borderbr.gif"));
 	
+	//Creates frame
 	public Screen() {
 		super("Minesweeper");
 		setUpBorders();
 		setUp();
 	}
 	
+	//Creates all borders
 	private void setUpBorders() {
 		//Set up top border
 		topBorder = new JPanel();
@@ -108,9 +112,11 @@ public class Screen extends JFrame {
 		GridBagConstraints c = new GridBagConstraints();
 		this.setLayout(gridBag);
 		
+		//Adds top border to frame
 		c.gridy = 0;
 		this.add(topBorder, c);
 		
+		//Adds left border to frame
 		c.gridy = 1;
 		this.add(leftBorder, c);
 		
@@ -118,8 +124,10 @@ public class Screen extends JFrame {
 		Minefield field = new Minefield();
 		this.add(field, c);
 		
+		//Adds right border to frame
 		this.add(rightBorder, c);
 		
+		//Adds bottom border to frame
 		c.gridy = 2;
 		this.add(bottomBorder, c);
 		

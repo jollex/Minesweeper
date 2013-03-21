@@ -12,22 +12,36 @@ import javax.swing.*;
 public class Minefield extends JPanel {
 
 	private static final long serialVersionUID = 1L;
+	
+	//Creates container to put panels in
 	private Container game = null;
 	
+	//Creates panels for components
 	private JPanel mines = null;
+	private JPanel border = null;
+	private JPanel controlPanel = null;
+	
+	//Game settings
 	private int rows = 8, cols = 8;
+	private final int BOMB_AMOUNT = 10;
+	
+	//All cell related arrays
 	private JLabel buttons[][] = new JLabel[rows][cols];
 	private boolean[][] bomb = new boolean[rows][cols];
 	private boolean shown[][] = new boolean[rows][cols];
 	private boolean marked[][] = new boolean[rows][cols];
 	private boolean flagged[][] = new boolean[rows][cols];
-	private final int BOMB_AMOUNT = 10;
+
+	//Variables needed during gameplay
 	private boolean gameStarted = false;
 	private int markedAmount = 0;
 	private int openCells = 0;
 	private int maxCells = rows * cols;
 	private boolean rightClick = false, leftClick = false;
+	private int time = 0;
+	private int bombsFlagged = 10;
 	
+	//Load needed images
 	private ImageIcon blank = new javax.swing.ImageIcon(getClass().getResource("images/blank.gif"));
 	private ImageIcon bombFlagged = new javax.swing.ImageIcon(getClass().getResource("images/bombflagged.gif"));
 	private ImageIcon bombRevealed = new javax.swing.ImageIcon(getClass().getResource("images/bombrevealed.gif"));
@@ -37,10 +51,8 @@ public class Minefield extends JPanel {
 	private ImageIcon faceSmile = new javax.swing.ImageIcon(getClass().getResource("images/facesmile.gif"));
 	private ImageIcon faceWin = new javax.swing.ImageIcon(getClass().getResource("images/facewin.gif"));
 	private ImageIcon bordertb = new javax.swing.ImageIcon(getClass().getResource("images/bordertb.gif"));
-	
-	private JPanel border = null;
-	
-	private JPanel controlPanel = null;
+
+	//Create labels for bomb counter, face, and timer
 	private JLabel bombs1;
 	private JLabel bombs2;
 	private JLabel bombs3;
@@ -48,17 +60,18 @@ public class Minefield extends JPanel {
 	private JLabel time2;
 	private JLabel time3;
 	private JButton face;
-	
-	private int time = 0;
-	private int bombsFlagged = 10;
 
+	//Creates the main game area
 	public Minefield() {
+		//Sets size of the main game area
 		this.setSize(128, 164);
 		
+		//Calls the set up functions for each component of the main game area
 		setUpMinefield();
 		setUpBorder();
 		setUpControls();
 		
+		//Sets up GridBagLayout to be used by the panel
 		game = this;
 		GridBagLayout gridBag = new GridBagLayout();
 		GridBagConstraints gameConstraints = new GridBagConstraints();
@@ -66,12 +79,15 @@ public class Minefield extends JPanel {
 		
 		gameConstraints.gridx = 0;
 		
+		//Adds control panel
 		gameConstraints.gridy = 0;
 		game.add(controlPanel, gameConstraints);
 		
+		//Adds border between control panel and minefield
 		gameConstraints.gridy = 1;
 		game.add(border, gameConstraints);
 		
+		//Adds minefield
 		gameConstraints.gridy = 2;
 		game.add(mines, gameConstraints);
 	}
@@ -98,7 +114,11 @@ public class Minefield extends JPanel {
 		GridBagConstraints minefield = new GridBagConstraints();
 		mines.setLayout(gridBag1);
 		
-		//Populates the buttons array with JLabels, sets them to the blank.gif icon, and adds them to the panel
+		/*Populates the buttons array with JLabels, 
+		*sets them to the blank.gif icon, 
+		*gives them each a mouse listener, 
+		*and adds them to the panel
+		**/
 		for (int row = 0; row < rows; row++) {
 			for (int col = 0; col < cols; col++) {
 				buttons[row][col] = new JLabel();
@@ -160,6 +180,8 @@ public class Minefield extends JPanel {
 		GridBagLayout gridBag2 = new GridBagLayout();
 		GridBagConstraints borderConstraints = new GridBagConstraints();
 		border.setLayout(gridBag2);
+		
+		//Adds border pieces to make complete border
 		borderConstraints.gridy = 0;
 		for (int i = 0; i < 32; i++) {
 			borderConstraints.gridx = i;
@@ -175,7 +197,7 @@ public class Minefield extends JPanel {
 		GridBagConstraints controls = new GridBagConstraints();
 		controlPanel.setLayout(gridBag2);
 		
-		//Load bomb counter icons
+		//Add bomb counter labels
 		bombs1 = new JLabel();
 		bombs1.setIcon(new javax.swing.ImageIcon(getClass().getResource("images/time0.gif")));
 		controls.gridx = 0;
@@ -212,7 +234,7 @@ public class Minefield extends JPanel {
 		controls.gridx = 3;
 		controlPanel.add(face, controls);
 		
-		//Load timer icons
+		//Add timer icons
 		time1 = new JLabel();
 		time1.setIcon(new javax.swing.ImageIcon(getClass().getResource("images/time0.gif")));
 		controls.gridx = 4;
@@ -232,6 +254,7 @@ public class Minefield extends JPanel {
 		controlPanel.setVisible(true);
 	}
 	
+	//Starts the game the very first time
 	private void startGame(java.awt.event.MouseEvent e) {
 		JLabel button = (JLabel)e.getSource();
 		int row = button.getX() / 16;
@@ -242,6 +265,7 @@ public class Minefield extends JPanel {
 		createBombs(row, col);
 	}
 	
+	//Resets the game to be played again
 	public void newGame() {
 		openCells = 0;
 		bombsFlagged = BOMB_AMOUNT;
@@ -257,6 +281,7 @@ public class Minefield extends JPanel {
 		}
 	}
 	
+	//Updates the timer
 	public void updateTime(int time) {
 		int hundreds, tens, ones;
 		hundreds = time / 100;
@@ -268,19 +293,13 @@ public class Minefield extends JPanel {
 		time3.setIcon(new javax.swing.ImageIcon(getClass().getResource("images/time" + ones + ".gif")));
 	}
 	
+	//Updates the counter by adding the change to the total
 	public void updateCounter(int change) {
 		bombsFlagged += change;
-		
-		int hundreds, tens, ones;
-		hundreds = bombsFlagged / 100;
-		tens = (bombsFlagged % 100) / 10;
-		ones = ((bombsFlagged % 100) % 10);
-		
-		bombs1.setIcon(new javax.swing.ImageIcon(getClass().getResource("images/time" + hundreds + ".gif")));
-		bombs2.setIcon(new javax.swing.ImageIcon(getClass().getResource("images/time" + tens + ".gif")));
-		bombs3.setIcon(new javax.swing.ImageIcon(getClass().getResource("images/time" + ones + ".gif")));
+		setCounter(bombsFlagged);
 	}
 	
+	//Sets the counter to a particular value
 	public void setCounter(int num) {
 		int hundreds, tens, ones;
 		hundreds = num / 100;
@@ -308,6 +327,7 @@ public class Minefield extends JPanel {
 		return bombCount;
 	}
 	
+	//Populates the field with bombs. First click will never be a bomb
 	private void createBombs(int row, int col) {
 		Random generator = new Random();
 		int bombs = 0;
@@ -323,6 +343,7 @@ public class Minefield extends JPanel {
 		}
 	}
 	
+	//Marks cell with a flag if blank, or blank if flagged
 	private void markCell(java.awt.event.MouseEvent e) {
 		JLabel button = (JLabel)e.getSource();
 		int row = button.getX() / 16;
@@ -341,6 +362,7 @@ public class Minefield extends JPanel {
 		}
 	}
 	
+	//Handle right and left click at the same time. Clears board accordingly
 	private void doubleClick(java.awt.event.MouseEvent e) {
 		JLabel button = (JLabel)e.getSource();
 		int row = button.getX() / 16;
@@ -372,6 +394,7 @@ public class Minefield extends JPanel {
 		}
 	}
 	
+	//Marks clicked cell to be opened and calls openNeighbors if no bombs around it
 	private void openCell(java.awt.event.MouseEvent e) {
 		JLabel button = (JLabel)e.getSource();
 		int row = button.getX() / 16;
@@ -390,6 +413,7 @@ public class Minefield extends JPanel {
 		}
 	}
 	
+	//Same as above but called with coordinates
 	private void openCell(int row, int col) {
 		int bombAmount = bombCount(row, col);
 		if (isBomb(row, col)) {
@@ -405,6 +429,7 @@ public class Minefield extends JPanel {
 		}
 	}
 	
+	//Marks surrounding cells to be opened and calls openCell on them again to keep opening
 	private void openNeighbors(int row, int col) {
 		for (int i = row-1; i <= row+1; i++) {
 			for (int j = col-1; j <= col+1; j++) {
@@ -418,11 +443,13 @@ public class Minefield extends JPanel {
 		}
 	}
 	
+	//Marks a cell to be opened
 	private void markCellToOpen(int row, int col) {
 		markedAmount++;
 		marked[row][col] = true;
 	}
 	
+	//Opens all marked cells
 	private void openAllMarked() {
 		while (markedAmount > 0) {
 			markedAmount--;
@@ -439,10 +466,12 @@ public class Minefield extends JPanel {
 		}
 	}
 	
+	//Returns true if cell is a bomb
 	private boolean isBomb(int row, int col) {
 		return bomb[row][col];
 	}
 	
+	//Handles victory, flags all bombs
 	private void win() {
 		timer.stop();
 		face.setIcon(faceWin);
@@ -458,6 +487,7 @@ public class Minefield extends JPanel {
 		}
 	}
 	
+	//Handles death, shows clicked bomb, misflagged bombs, and all other bombs
 	private void death(int row, int col) {
 		timer.stop();
 		gameStarted = false;
