@@ -25,7 +25,6 @@ public class Minefield extends JPanel implements MouseListener {
 	private boolean flagged[][] = new boolean[rows][cols];
 	private final int BOMB_AMOUNT = 10;
 	private boolean gameStarted = false;
-	private boolean gameEnded = false;
 	private int markedAmount = 0;
 	private int openCells = 0;
 	private int maxCells = rows * cols;
@@ -35,7 +34,7 @@ public class Minefield extends JPanel implements MouseListener {
 	private ImageIcon bombRevealed = new javax.swing.ImageIcon(getClass().getResource("images/bombrevealed.gif"));
 	private ImageIcon bombDeath = new javax.swing.ImageIcon(getClass().getResource("images/bombdeath.gif"));
 	private ImageIcon bombMisflagged = new javax.swing.ImageIcon(getClass().getResource("images/bombmisflagged.gif"));
-	//private ImageIcon faceOoh = new javax.swing.ImageIcon(getClass().getResource("images/faceooh.gif"));
+	private ImageIcon faceOoh = new javax.swing.ImageIcon(getClass().getResource("images/faceooh.gif"));
 	private ImageIcon faceSmile = new javax.swing.ImageIcon(getClass().getResource("images/facesmile.gif"));
 	private ImageIcon bordertb = new javax.swing.ImageIcon(getClass().getResource("images/bordertb.gif"));
 	
@@ -107,20 +106,22 @@ public class Minefield extends JPanel implements MouseListener {
 				buttons[row][col].setBorder(BorderFactory.createEmptyBorder());
 				
 				buttons[row][col].addMouseListener(new java.awt.event.MouseAdapter() {
+					public void mousePressed(java.awt.event.MouseEvent e) {
+						face.setIcon(faceOoh);
+					}
 					public void mouseReleased(java.awt.event.MouseEvent e) {
 						if (e.getModifiers() == InputEvent.BUTTON3_MASK) {
-							if (gameEnded == false) {
+							if (gameStarted == true) {
 								markCell(e);
 							}
 						} else if (e.getModifiers() == InputEvent.BUTTON1_MASK) {
-							if (gameEnded == false) {
-								if (gameStarted == false) {
-									startGame(e);
-								}
-								openCell(e);
-								openAllMarked();
+							if (gameStarted == false) {
+								startGame(e);
 							}
+							openCell(e);
+							openAllMarked();
 						}
+						face.setIcon(faceSmile);
 					}
 				});
 				
@@ -184,6 +185,10 @@ public class Minefield extends JPanel implements MouseListener {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				if (e.getModifiers() == InputEvent.BUTTON1_MASK) {
+					gameStarted = false;
+					time = 0;
+					timer.stop();
+					updateTime(0);
 					newGame();
 				}
 			}
@@ -218,13 +223,40 @@ public class Minefield extends JPanel implements MouseListener {
 		int col = button.getY() / 16;
 		
 		gameStarted = true;
-		//timer.start();
+		timer.start();
 		createBombs(row, col);
 	}
 	
 	public void newGame() {
-		time = 0;
-		timer.start();
+		openCells = 0;
+		bombsFlagged = BOMB_AMOUNT;
+		setCounter(BOMB_AMOUNT);
+		for (int row = 0; row < rows; row++) {
+			for (int col = 0; col < cols; col++) {
+				buttons[row][col].setIcon(blank);
+				flagged[row][col] = false;
+				marked[row][col] = false;
+				bomb[row][col] = false;
+				shown[row][col] = false;
+				
+				buttons[row][col].addMouseListener(new java.awt.event.MouseAdapter() {
+					public void mouseReleased(java.awt.event.MouseEvent e) {
+						if (e.getModifiers() == InputEvent.BUTTON3_MASK) {
+							if (gameStarted == true) {
+								markCell(e);
+							}
+						} else if (e.getModifiers() == InputEvent.BUTTON1_MASK) {
+							if (gameStarted == false) {
+								startGame(e);
+								timer.start();
+							}
+							openCell(e);
+							openAllMarked();
+						}
+					}
+				});
+			}
+		}
 	}
 	
 	public void updateTime(int time) {
@@ -251,6 +283,17 @@ public class Minefield extends JPanel implements MouseListener {
 		bombs3.setIcon(new javax.swing.ImageIcon(getClass().getResource("images/time" + ones + ".gif")));
 	}
 	
+	public void setCounter(int num) {
+		int hundreds, tens, ones;
+		hundreds = num / 100;
+		tens = (num % 100) / 10;
+		ones = ((num % 100) % 10);
+		
+		bombs1.setIcon(new javax.swing.ImageIcon(getClass().getResource("images/time" + hundreds + ".gif")));
+		bombs2.setIcon(new javax.swing.ImageIcon(getClass().getResource("images/time" + tens + ".gif")));
+		bombs3.setIcon(new javax.swing.ImageIcon(getClass().getResource("images/time" + ones + ".gif")));
+	}
+	
 	//Returns the amount of bombs around a cell
 	private int bombCount(int row, int col){
 		int bombCount = 0;
@@ -271,7 +314,7 @@ public class Minefield extends JPanel implements MouseListener {
 		Random generator = new Random();
 		int bombs = 0;
 		
-		while (bombs < BOMB_AMOUNT - 1) {
+		while (bombs < BOMB_AMOUNT) {
 			int r = generator.nextInt(rows);
 			int c = generator.nextInt(cols);
 			
@@ -291,9 +334,11 @@ public class Minefield extends JPanel implements MouseListener {
 			if (!flagged[row][col]) {
 				flagged[row][col] = true;
 				button.setIcon(bombFlagged);
+				updateCounter(-1);
 			} else {
 				flagged[row][col] = false;
 				button.setIcon(blank);
+				updateCounter(1);
 			}	
 		}
 	}
@@ -314,7 +359,7 @@ public class Minefield extends JPanel implements MouseListener {
 				openNeighbors(row, col);
 			}
 		}
-		if (openCells + BOMB_AMOUNT - 1 == maxCells) {
+		if (openCells + BOMB_AMOUNT - 1 >= maxCells) {
 			win();
 		}
 	}
@@ -370,7 +415,7 @@ public class Minefield extends JPanel implements MouseListener {
 	}
 	
 	private void win() {
-		//timer.stop();
+		timer.stop();
 		for (int row = 0; row < rows; row++) {
 			for (int col = 0; col < cols; col++) {
 				if (bomb[row][col]) {
@@ -381,6 +426,8 @@ public class Minefield extends JPanel implements MouseListener {
 	}
 	
 	private void death(int row, int col) {
+		timer.stop();
+		gameStarted = false;
 		for (int r = 0; r < rows; r++) {
 			for (int c = 0; c < cols; c++) {
 				if (flagged[r][c] && !bomb[r][c]) {
@@ -395,7 +442,6 @@ public class Minefield extends JPanel implements MouseListener {
 				}
 			}
 		}
-		gameEnded = true;
 	}
 	
 	@Override
