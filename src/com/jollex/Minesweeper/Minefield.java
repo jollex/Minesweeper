@@ -14,7 +14,9 @@ import javax.swing.*;
 public class Minefield extends JPanel implements MouseListener {
 
 	private static final long serialVersionUID = 1L;
-	private Container mines = null;
+	private Container game = null;
+	
+	private JPanel mines = null;
 	private int rows = 8, cols = 8;
 	private JLabel buttons[][] = new JLabel[rows][cols];
 	private boolean[][] bomb = new boolean[rows][cols];
@@ -35,8 +37,11 @@ public class Minefield extends JPanel implements MouseListener {
 	private ImageIcon bombMisflagged = new javax.swing.ImageIcon(getClass().getResource("images/bombmisflagged.gif"));
 	//private ImageIcon faceOoh = new javax.swing.ImageIcon(getClass().getResource("images/faceooh.gif"));
 	private ImageIcon faceSmile = new javax.swing.ImageIcon(getClass().getResource("images/facesmile.gif"));
+	private ImageIcon bordertb = new javax.swing.ImageIcon(getClass().getResource("images/bordertb.gif"));
 	
-	private Container controlPanel = null;
+	private JPanel border = null;
+	
+	private JPanel controlPanel = null;
 	private JLabel bombs1;
 	private JLabel bombs2;
 	private JLabel bombs3;
@@ -49,8 +54,27 @@ public class Minefield extends JPanel implements MouseListener {
 	private int bombsFlagged = 10;
 
 	public Minefield() {
+		this.setSize(128, 164);
+		
 		setUpMinefield();
+		setUpBorder();
 		setUpControls();
+		
+		game = this;
+		GridBagLayout gridBag = new GridBagLayout();
+		GridBagConstraints gameConstraints = new GridBagConstraints();
+		game.setLayout(gridBag);
+		
+		gameConstraints.gridx = 0;
+		
+		gameConstraints.gridy = 0;
+		game.add(controlPanel, gameConstraints);
+		
+		gameConstraints.gridy = 1;
+		game.add(border, gameConstraints);
+		
+		gameConstraints.gridy = 2;
+		game.add(mines, gameConstraints);
 	}
 	
 	//Create timer with an ActionListener
@@ -68,14 +92,12 @@ public class Minefield extends JPanel implements MouseListener {
 	
 	//Sets up the minefield
 	private void setUpMinefield() {
-		//Sets the size of the minefield
-		this.setSize(128, 128);
-		
 		//Sets the JPanel to use GridBagLayout
-		mines = this;
-		GridBagLayout gridBag = new GridBagLayout();
-		GridBagConstraints c = new GridBagConstraints();
-		mines.setLayout(gridBag);
+		mines = new JPanel();
+		mines.setSize(128, 128);
+		GridBagLayout gridBag1 = new GridBagLayout();
+		GridBagConstraints minefield = new GridBagConstraints();
+		mines.setLayout(gridBag1);
 		
 		//Populates the buttons array with JLabels, sets them to the blank.gif icon, and adds them to the panel
 		for (int row = 0; row < rows; row++) {
@@ -102,9 +124,9 @@ public class Minefield extends JPanel implements MouseListener {
 					}
 				});
 				
-				c.gridx = row;
-				c.gridy = col;
-				mines.add(buttons[row][col], c);
+				minefield.gridx = row;
+				minefield.gridy = col;
+				mines.add(buttons[row][col], minefield);
 				
 				flagged[row][col] = false;
 				marked[row][col] = false;
@@ -116,31 +138,43 @@ public class Minefield extends JPanel implements MouseListener {
 		this.setVisible(true);
 	}
 	
+	private void setUpBorder() {		
+		//Sets the JPanel to use GridBagLayout
+		border = new JPanel();
+		border.setSize(128, 10);
+		GridBagLayout gridBag2 = new GridBagLayout();
+		GridBagConstraints borderConstraints = new GridBagConstraints();
+		border.setLayout(gridBag2);
+		borderConstraints.gridy = 0;
+		for (int i = 0; i < 32; i++) {
+			borderConstraints.gridx = i;
+			border.add(new JLabel(bordertb), borderConstraints);
+		}
+	}
+	
 	private void setUpControls() {
-		//Sets size of JPanel
-		this.setSize(128, 26);
-		
 		//Sets JPanel to use GridBagLayout
-		controlPanel = this;
-		GridBagLayout gridBag = new GridBagLayout();
-		GridBagConstraints c = new GridBagConstraints();
-		controlPanel.setLayout(gridBag);
+		controlPanel = new JPanel();
+		controlPanel.setSize(128, 26);
+		GridBagLayout gridBag2 = new GridBagLayout();
+		GridBagConstraints controls = new GridBagConstraints();
+		controlPanel.setLayout(gridBag2);
 		
 		//Load bomb counter icons
 		bombs1 = new JLabel();
 		bombs1.setIcon(new javax.swing.ImageIcon(getClass().getResource("images/time0.gif")));
-		c.gridx = 0;
-		this.add(bombs1, c);
+		controls.gridx = 0;
+		controlPanel.add(bombs1, controls);
 
 		bombs2 = new JLabel();
 		bombs2.setIcon(new javax.swing.ImageIcon(getClass().getResource("images/time1.gif")));
-		c.gridx = 1;
-		this.add(bombs2, c);
+		controls.gridx = 1;
+		controlPanel.add(bombs2, controls);
 		
 		bombs3 = new JLabel();
 		bombs3.setIcon(new javax.swing.ImageIcon(getClass().getResource("images/time0.gif")));
-		c.gridx = 2;
-		this.add(bombs3, c);
+		controls.gridx = 2;
+		controlPanel.add(bombs3, controls);
 		
 		//Load face button and adds ActionListener to it
 		face = new JButton();
@@ -155,27 +189,27 @@ public class Minefield extends JPanel implements MouseListener {
 			}
 		};
 		face.addActionListener(faceClick);
-		c.gridx = 3;
-		this.add(face, c);
+		controls.gridx = 3;
+		controlPanel.add(face, controls);
 		
 		//Load timer icons
 		time1 = new JLabel();
 		time1.setIcon(new javax.swing.ImageIcon(getClass().getResource("images/time0.gif")));
-		c.gridx = 4;
-		this.add(time1, c);
+		controls.gridx = 4;
+		controlPanel.add(time1, controls);
 		
 		time2 = new JLabel();
 		time2.setIcon(new javax.swing.ImageIcon(getClass().getResource("images/time0.gif")));
-		c.gridx = 5;
-		this.add(time2, c);
+		controls.gridx = 5;
+		controlPanel.add(time2, controls);
 		
 		time3 = new JLabel();
 		time3.setIcon(new javax.swing.ImageIcon(getClass().getResource("images/time0.gif")));
-		c.gridx = 6;
-		this.add(time3, c);
+		controls.gridx = 6;
+		controlPanel.add(time3, controls);
 		
 		//Sets JFrame to be visible
-		this.setVisible(true);
+		controlPanel.setVisible(true);
 	}
 	
 	private void startGame(java.awt.event.MouseEvent e) {
