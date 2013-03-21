@@ -21,7 +21,7 @@ public class Controls extends JPanel implements MouseListener {
 	private int time = 0;
 	private int bombsFlagged = 10;
 	
-	private ImageIcon faceOoh = new javax.swing.ImageIcon(getClass().getResource("images/faceooh.gif"));
+	//private ImageIcon faceOoh = new javax.swing.ImageIcon(getClass().getResource("images/faceooh.gif"));
 	private ImageIcon faceSmile = new javax.swing.ImageIcon(getClass().getResource("images/facesmile.gif"));
 
 	public Controls() {

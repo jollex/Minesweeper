@@ -22,12 +22,16 @@ public class Minefield extends JPanel implements MouseListener {
 	private boolean flagged[][] = new boolean[rows][cols];
 	private final int BOMB_AMOUNT = 10;
 	private boolean gameStarted = false;
+	private boolean gameEnded = false;
 	private int markedAmount = 0;
+	private int openCells = 0;
+	private int maxCells = rows * cols;
 	
 	private ImageIcon blank = new javax.swing.ImageIcon(getClass().getResource("images/blank.gif"));
 	private ImageIcon bombFlagged = new javax.swing.ImageIcon(getClass().getResource("images/bombflagged.gif"));
 	private ImageIcon bombRevealed = new javax.swing.ImageIcon(getClass().getResource("images/bombrevealed.gif"));
 	private ImageIcon bombDeath = new javax.swing.ImageIcon(getClass().getResource("images/bombdeath.gif"));
+	private ImageIcon bombMisflagged = new javax.swing.ImageIcon(getClass().getResource("images/bombmisflagged.gif"));
 
 	public Minefield() {
 		setUp();
@@ -54,13 +58,17 @@ public class Minefield extends JPanel implements MouseListener {
 				buttons[row][col].addMouseListener(new java.awt.event.MouseAdapter() {
 					public void mouseReleased(java.awt.event.MouseEvent e) {
 						if (e.getModifiers() == InputEvent.BUTTON3_MASK) {
-							markCell(e);
-						} else if (e.getModifiers() == InputEvent.BUTTON1_MASK) {
-							if (gameStarted == false) {
-								startGame(e);
+							if (gameEnded == false) {
+								markCell(e);
 							}
-							openCell(e);
-							openAllMarked();
+						} else if (e.getModifiers() == InputEvent.BUTTON1_MASK) {
+							if (gameEnded == false) {
+								if (gameStarted == false) {
+									startGame(e);
+								}
+								openCell(e);
+								openAllMarked();
+							}
 						}
 					}
 				});
@@ -125,12 +133,14 @@ public class Minefield extends JPanel implements MouseListener {
 		int row = button.getX() / 16;
 		int col = button.getY() / 16;
 
-		if (!flagged[row][col]) {
-			flagged[row][col] = true;
-			button.setIcon(bombFlagged);
-		} else {
-			flagged[row][col] = false;
-			button.setIcon(blank);
+		if (!shown[row][col]) {
+			if (!flagged[row][col]) {
+				flagged[row][col] = true;
+				button.setIcon(bombFlagged);
+			} else {
+				flagged[row][col] = false;
+				button.setIcon(blank);
+			}	
 		}
 	}
 
@@ -141,22 +151,25 @@ public class Minefield extends JPanel implements MouseListener {
 		int col = button.getY() / 16;
 		int bombAmount = bombCount(row, col);
 		if (isBomb(row, col)) {
-			endGame(row, col);
+			death(row, col);
 		} else {
 			buttons[row][col].setIcon(new javax.swing.ImageIcon(getClass().getResource("images/open" + bombAmount + ".gif")));
+			openCells++;
 			shown[row][col] = true;
 			if (!isBomb(row, col) && (bombAmount == 0)) {
 				openNeighbors(row, col);
 			}
+		}
+		if (openCells + BOMB_AMOUNT - 1 == maxCells) {
+			win();
 		}
 	}
 	
 	private void openCell(int row, int col) {
 		int bombAmount = bombCount(row, col);
 		if (isBomb(row, col)) {
-			endGame(row, col);
+			death(row, col);
 		} else {
-			buttons[row][col].setIcon(new javax.swing.ImageIcon(getClass().getResource("images/open" + bombAmount + ".gif")));
 			shown[row][col] = true;
 			if (!isBomb(row, col) && (bombAmount == 0)) {
 				openNeighbors(row, col);
@@ -191,6 +204,7 @@ public class Minefield extends JPanel implements MouseListener {
 						int bombAmount = bombCount(row, col);
 						marked[row][col] = false;
 						buttons[row][col].setIcon(new javax.swing.ImageIcon(getClass().getResource("images/open" + bombAmount + ".gif")));
+						openCells++;
 					}
 				}
 			}
@@ -201,20 +215,33 @@ public class Minefield extends JPanel implements MouseListener {
 		return bomb[row][col];
 	}
 	
-	private void endGame(int row, int col) {
-		System.out.println("Hit bomb.");
-		for (int r = 0; r < rows; r++) {
-			for (int c = 0; c < cols; c++) {
-				String button = buttons[row][col].getIcon().toString();
-				String flag = bombFlagged.toString();
-				if (bomb[row][col] && button.equals(flag)) {
-					buttons[row][col].setIcon(bombRevealed);
-				} else if (!bomb[row][col] && button.equals(flag)) {
+	private void win() {
+		//timer.stop();
+		for (int row = 0; row < rows; row++) {
+			for (int col = 0; col < cols; col++) {
+				if (bomb[row][col]) {
 					buttons[row][col].setIcon(bombFlagged);
 				}
 			}
 		}
-		buttons[row][col].setIcon(bombDeath);
+	}
+	
+	private void death(int row, int col) {
+		for (int r = 0; r < rows; r++) {
+			for (int c = 0; c < cols; c++) {
+				if (flagged[r][c] && !bomb[r][c]) {
+					buttons[r][c].setIcon(bombMisflagged);
+				}
+				if (bomb[r][c]) {
+					if (r == row && c == col) {
+						buttons[r][c].setIcon(bombDeath);
+					} else if (bomb[r][c]) {
+						buttons[r][c].setIcon(bombRevealed);
+					}
+				}
+			}
+		}
+		gameEnded = true;
 	}
 	
 	@Override
