@@ -3,15 +3,13 @@ package com.jollex.Minesweeper;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.awt.Container;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.util.Random;
 import javax.swing.*;
 
-public class Minefield extends JPanel implements MouseListener {
+public class Minefield extends JPanel {
 
 	private static final long serialVersionUID = 1L;
 	private Container game = null;
@@ -28,6 +26,7 @@ public class Minefield extends JPanel implements MouseListener {
 	private int markedAmount = 0;
 	private int openCells = 0;
 	private int maxCells = rows * cols;
+	private boolean rightClick = false, leftClick = false;
 	
 	private ImageIcon blank = new javax.swing.ImageIcon(getClass().getResource("images/blank.gif"));
 	private ImageIcon bombFlagged = new javax.swing.ImageIcon(getClass().getResource("images/bombflagged.gif"));
@@ -109,19 +108,33 @@ public class Minefield extends JPanel implements MouseListener {
 				buttons[row][col].addMouseListener(new java.awt.event.MouseAdapter() {
 					public void mousePressed(java.awt.event.MouseEvent e) {
 						face.setIcon(faceOoh);
+						if (e.getModifiers() == InputEvent.BUTTON3_MASK) {
+							rightClick = true;
+						} else if (e.getModifiers() == InputEvent.BUTTON1_MASK) {
+							leftClick = true;
+						}
 					}
 					public void mouseReleased(java.awt.event.MouseEvent e) {
 						face.setIcon(faceSmile);
-						if (e.getModifiers() == InputEvent.BUTTON3_MASK) {
+						if (rightClick && leftClick) {
+							doubleClick(e);
+							rightClick = false;
+							leftClick = false;
+						} else if (e.getModifiers() == InputEvent.BUTTON3_MASK) {
 							if (gameStarted == true) {
 								markCell(e);
 							}
+							rightClick = false;
 						} else if (e.getModifiers() == InputEvent.BUTTON1_MASK) {
 							if (gameStarted == false) {
 								startGame(e);
 							}
 							openCell(e);
 							openAllMarked();
+							leftClick = false;
+						}
+						if (openCells + BOMB_AMOUNT == maxCells) {
+							win();
 						}
 					}
 				});
@@ -327,7 +340,37 @@ public class Minefield extends JPanel implements MouseListener {
 			}	
 		}
 	}
-
+	
+	private void doubleClick(java.awt.event.MouseEvent e) {
+		JLabel button = (JLabel)e.getSource();
+		int row = button.getX() / 16;
+		int col = button.getY() / 16;
+		boolean bombPresent = false;
+		
+		for (int x = row-1; x <= row+1; x++) {
+			for (int y = col-1; y <= col+1; y++) {
+				boolean inBoard = x >= 0 && x < buttons.length && y >= 0 && y < buttons[x].length;
+				if (inBoard) {
+					if (bomb[x][y] && !flagged[x][y]) {
+						bombPresent = true;
+					}	
+				}
+			}
+		}
+		if (!bombPresent) {
+			for (int x = row-1; x <= row+1; x++) {
+				for (int y = col-1; y <= col+1; y++) {
+					boolean inBoard = x >= 0 && x < buttons.length && y >= 0 && y < buttons[x].length;
+					if (inBoard) {
+						if (!shown[x][y] && !bomb[x][y] && !flagged[x][y]) {
+							openCell(x, y);
+							openAllMarked();
+						}	
+					}
+				}
+			}
+		}
+	}
 	
 	private void openCell(java.awt.event.MouseEvent e) {
 		JLabel button = (JLabel)e.getSource();
@@ -337,15 +380,13 @@ public class Minefield extends JPanel implements MouseListener {
 		if (isBomb(row, col)) {
 			death(row, col);
 		} else {
-			buttons[row][col].setIcon(new javax.swing.ImageIcon(getClass().getResource("images/open" + bombAmount + ".gif")));
-			openCells++;
-			shown[row][col] = true;
-			if (!isBomb(row, col) && (bombAmount == 0)) {
-				openNeighbors(row, col);
+			if (!shown[row][col]) {
+				markCellToOpen(row, col);
+				shown[row][col] = true;
+				if (bombAmount == 0) {
+					openNeighbors(row, col);
+				}
 			}
-		}
-		if (openCells + BOMB_AMOUNT == maxCells) {
-			win();
 		}
 	}
 	
@@ -354,9 +395,12 @@ public class Minefield extends JPanel implements MouseListener {
 		if (isBomb(row, col)) {
 			death(row, col);
 		} else {
-			shown[row][col] = true;
-			if (!isBomb(row, col) && (bombAmount == 0)) {
-				openNeighbors(row, col);
+			if (!shown[row][col]) {
+				markCellToOpen(row, col);
+				shown[row][col] = true;
+				if (bombAmount == 0) {
+					openNeighbors(row, col);
+				}
 			}
 		}
 	}
@@ -431,35 +475,5 @@ public class Minefield extends JPanel implements MouseListener {
 				}
 			}
 		}
-	}
-	
-	@Override
-	public void mouseClicked(MouseEvent arg0) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void mouseEntered(MouseEvent arg0) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void mouseExited(MouseEvent arg0) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void mousePressed(MouseEvent arg0) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void mouseReleased(MouseEvent arg0) {
-		// TODO Auto-generated method stub
-
 	}
 }
