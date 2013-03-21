@@ -151,12 +151,26 @@ public class Minefield extends JPanel implements MouseListener {
 		}
 	}
 	
+	private void openCell(int row, int col) {
+		int bombAmount = bombCount(row, col);
+		if (isBomb(row, col)) {
+			endGame(row, col);
+		} else {
+			buttons[row][col].setIcon(new javax.swing.ImageIcon(getClass().getResource("images/open" + bombAmount + ".gif")));
+			shown[row][col] = true;
+			if (!isBomb(row, col) && (bombAmount == 0)) {
+				openNeighbors(row, col);
+			}
+		}
+	}
+	
 	private void openNeighbors(int row, int col) {
 		for (int i = row-1; i <= row+1; i++) {
 			for (int j = col-1; j <= col+1; j++) {
 				if (i >= 0 && i < buttons.length && j >= 0 && j < buttons[i].length) {
 					if (!shown[i][j] && !flagged[i][j]) {
 						markCellToOpen(i, j);
+						openCell(i, j);
 					}
 				}
 			}

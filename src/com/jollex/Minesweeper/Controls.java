@@ -154,12 +154,10 @@ public class Controls extends JPanel implements MouseListener {
 
 	@Override
 	public void mousePressed(MouseEvent e) {
-		face.setIcon(faceOoh);
 	}
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
-		face.setIcon(faceSmile);
 	}
 
 }
