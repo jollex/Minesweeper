@@ -50,6 +50,7 @@ public class Minefield extends JPanel {
 	private ImageIcon faceOoh = new javax.swing.ImageIcon(getClass().getResource("images/faceooh.gif"));
 	private ImageIcon faceSmile = new javax.swing.ImageIcon(getClass().getResource("images/facesmile.gif"));
 	private ImageIcon faceWin = new javax.swing.ImageIcon(getClass().getResource("images/facewin.gif"));
+	private ImageIcon faceDead = new javax.swing.ImageIcon(getClass().getResource("images/facedead.gif"));
 	private ImageIcon bordertb = new javax.swing.ImageIcon(getClass().getResource("images/bordertb.gif"));
 
 	//Create labels for bomb counter, face, and timer
@@ -216,7 +217,7 @@ public class Minefield extends JPanel {
 		//Load face button and adds ActionListener to it
 		face = new JButton();
 		face.setIcon(faceSmile);
-		face.setBorder(BorderFactory.createEmptyBorder());
+		face.setBorder(BorderFactory.createEmptyBorder(0, 12, 0, 12));
 		ActionListener faceClick = new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -267,6 +268,7 @@ public class Minefield extends JPanel {
 	
 	//Resets the game to be played again
 	public void newGame() {
+		face.setIcon(faceSmile);
 		openCells = 0;
 		bombsFlagged = BOMB_AMOUNT;
 		setCounter(BOMB_AMOUNT);
@@ -489,6 +491,7 @@ public class Minefield extends JPanel {
 	
 	//Handles death, shows clicked bomb, misflagged bombs, and all other bombs
 	private void death(int row, int col) {
+		face.setIcon(faceDead);
 		timer.stop();
 		gameStarted = false;
 		for (int r = 0; r < rows; r++) {

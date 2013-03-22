@@ -1,5 +1,6 @@
 package com.jollex.Minesweeper;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -20,6 +21,7 @@ public class Screen extends JFrame {
 	private ImageIcon bordertb = new javax.swing.ImageIcon(getClass().getResource("images/bordertb.gif"));
 	private ImageIcon bordertr = new javax.swing.ImageIcon(getClass().getResource("images/bordertr.gif"));
 	private ImageIcon borderlr = new javax.swing.ImageIcon(getClass().getResource("images/borderlr.gif"));
+	private ImageIcon borderlr1 = new javax.swing.ImageIcon(getClass().getResource("images/borderlr1.gif"));
 	private ImageIcon borderjointl = new javax.swing.ImageIcon(getClass().getResource("images/borderjointl.gif"));
 	private ImageIcon borderjointr = new javax.swing.ImageIcon(getClass().getResource("images/borderjointr.gif"));
 	private ImageIcon borderbl = new javax.swing.ImageIcon(getClass().getResource("images/borderbl.gif"));
@@ -61,8 +63,10 @@ public class Screen extends JFrame {
 			leftBorder.add(new JLabel(borderlr), l);
 		}
 		l.gridy = 9;
+		leftBorder.add(new JLabel(borderlr1), l);
+		l.gridy = 10;
 		leftBorder.add(new JLabel(borderjointl), l);
-		for (int i = 10; i < 44; i++) {
+		for (int i = 11; i < 45; i++) {
 			l.gridy = i;
 			leftBorder.add(new JLabel(borderlr), l);
 		}
@@ -78,8 +82,10 @@ public class Screen extends JFrame {
 			rightBorder.add(new JLabel(borderlr), r);
 		}
 		r.gridy = 9;
+		rightBorder.add(new JLabel(borderlr1), r);
+		r.gridy = 10;
 		rightBorder.add(new JLabel(borderjointr), r);
-		for (int i = 10; i < 44; i++) {
+		for (int i = 11; i < 45; i++) {
 			r.gridy = i;
 			rightBorder.add(new JLabel(borderlr), r);
 		}
@@ -104,32 +110,25 @@ public class Screen extends JFrame {
 	private void setUp() {
 		//Sets up frame
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
-		this.setSize(148, 184);
+		this.setSize(148, 206);
 		this.setBackground(Color.RED);
-		
-		//Sets frame to use GridBagLayout
-		GridBagLayout gridBag = new GridBagLayout();
-		GridBagConstraints c = new GridBagConstraints();
-		this.setLayout(gridBag);
+		this.setResizable(false);
 		
 		//Adds top border to frame
-		c.gridy = 0;
-		this.add(topBorder, c);
+		this.add(topBorder, BorderLayout.PAGE_START);
 		
 		//Adds left border to frame
-		c.gridy = 1;
-		this.add(leftBorder, c);
+		this.add(leftBorder, BorderLayout.LINE_START);
 		
 		//Adds the minefield panel to the frame
 		Minefield field = new Minefield();
-		this.add(field, c);
+		this.add(field, BorderLayout.CENTER);
 		
 		//Adds right border to frame
-		this.add(rightBorder, c);
+		this.add(rightBorder, BorderLayout.LINE_END);
 		
 		//Adds bottom border to frame
-		c.gridy = 2;
-		this.add(bottomBorder, c);
+		this.add(bottomBorder, BorderLayout.PAGE_END);
 		
 		this.setVisible(true);
 	}
