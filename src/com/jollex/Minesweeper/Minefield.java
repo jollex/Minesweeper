@@ -3,7 +3,10 @@ package com.jollex.Minesweeper;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
+import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Container;
+import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.util.Random;
@@ -15,11 +18,18 @@ public class Minefield extends JPanel {
 	
 	//Creates container to put panels in
 	private Container game = null;
+	private JPanel prom = null;
 	
-	//Creates panels for components
+	//Creates panels for game
 	private JPanel mines = null;
 	private JPanel border = null;
 	private JPanel controlPanel = null;
+	
+	//Creates components for prom
+	private JLabel question = null;
+	private JPanel promButtons = null;
+	private JButton yes = null;
+	private JButton no = null;
 	
 	//Game settings
 	private int rows = 8, cols = 8;
@@ -71,6 +81,7 @@ public class Minefield extends JPanel {
 		setUpMinefield();
 		setUpBorder();
 		setUpControls();
+		setUpProm();
 		
 		//Sets up GridBagLayout to be used by the panel
 		game = this;
@@ -91,6 +102,11 @@ public class Minefield extends JPanel {
 		//Adds minefield
 		gameConstraints.gridy = 2;
 		game.add(mines, gameConstraints);
+		
+		controlPanel.setVisible(false);
+		border.setVisible(false);
+		mines.setVisible(false);
+		game.add(prom);
 	}
 	
 	//Create timer with an ActionListener
@@ -253,6 +269,33 @@ public class Minefield extends JPanel {
 		
 		//Sets JFrame to be visible
 		controlPanel.setVisible(true);
+	}
+	
+	private void setUpProm() {
+		prom = new JPanel();
+		prom.setSize(128, 164);
+		prom.setBackground(Color.RED);
+		
+		promButtons = new JPanel();
+		
+		question = new JLabel();
+		question.setText("<html><center>Janine, will you go" +
+				"<br>to prom with me?" +
+				"</center></html>");
+		question.setFont(new Font("Arial", Font.BOLD, 12));
+		question.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 90));
+		
+		yes = new JButton("Yes");
+		yes.setFont(new Font("Arial", Font.BOLD, 12));
+		
+		no = new JButton("No");
+		no.setFont(new Font("Arial", Font.BOLD, 12));
+		
+		prom.add(question, BorderLayout.CENTER);
+		promButtons.add(yes);
+		promButtons.add(no);
+		prom.add(promButtons, BorderLayout.PAGE_END);
+		
 	}
 	
 	//Starts the game the very first time
