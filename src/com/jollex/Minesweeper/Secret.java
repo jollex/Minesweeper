@@ -75,7 +75,7 @@ public class Secret extends JPanel {
 		yes.setVisible(false);
 		no.setVisible(false);
 		
-		answer.setText("Yay!");
+		answer.setText("You're the bomb!");
 		answer.setVisible(true);
 	}
 	

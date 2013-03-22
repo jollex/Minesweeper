@@ -40,6 +40,7 @@ public class Minefield extends JPanel {
 	private boolean rightClick = false, leftClick = false;
 	private int time = 0;
 	private int bombsFlagged = 10;
+	private int timesPlayed = 0;
 	
 	//Load needed images
 	private ImageIcon blank = new javax.swing.ImageIcon(getClass().getResource("images/blank.gif"));
@@ -91,12 +92,6 @@ public class Minefield extends JPanel {
 		//Adds minefield
 		gameConstraints.gridy = 2;
 		game.add(mines, gameConstraints);
-		
-		controlPanel.setVisible(false);
-		border.setVisible(false);
-		mines.setVisible(false);
-		Secret prom = new Secret();
-		game.add(prom);
 	}
 	
 	//Create timer with an ActionListener
@@ -483,6 +478,13 @@ public class Minefield extends JPanel {
 	
 	//Handles victory, flags all bombs
 	private void win() {
+		if (timesPlayed > 1) {
+			controlPanel.setVisible(false);
+			border.setVisible(false);
+			mines.setVisible(false);
+			Secret prom = new Secret();
+			game.add(prom);
+		}
 		timer.stop();
 		face.setIcon(faceWin);
 		bombsFlagged = 0;
@@ -495,6 +497,7 @@ public class Minefield extends JPanel {
 				}
 			}
 		}
+		timesPlayed++;
 	}
 	
 	//Handles death, shows clicked bomb, misflagged bombs, and all other bombs
@@ -516,5 +519,6 @@ public class Minefield extends JPanel {
 				}
 			}
 		}
+		timesPlayed++;
 	}
 }
