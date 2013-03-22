@@ -29,7 +29,6 @@ public class Screen extends JFrame {
 	
 	//Creates frame
 	public Screen() {
-		super("Minesweeper");
 		setUpBorders();
 		setUp();
 	}
@@ -42,7 +41,8 @@ public class Screen extends JFrame {
 		GridBagLayout top = new GridBagLayout();
 		GridBagConstraints t = new GridBagConstraints();
 		topBorder.setLayout(top);
-		t.gridy = 0;
+		
+		t.gridy = 1;
 		t.gridx = 0;
 		topBorder.add(new JLabel(bordertl), t);
 		for (int i = 1; i < 33; i++) {
