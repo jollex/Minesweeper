@@ -478,7 +478,7 @@ public class Minefield extends JPanel {
 	
 	//Handles victory, flags all bombs
 	private void win() {
-		if (timesPlayed > 1) {
+		if (timesPlayed >= 1) {
 			controlPanel.setVisible(false);
 			border.setVisible(false);
 			mines.setVisible(false);
