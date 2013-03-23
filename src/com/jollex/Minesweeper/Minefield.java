@@ -40,6 +40,7 @@ public class Minefield extends JPanel {
 	private boolean rightClick = false, leftClick = false;
 	private int time = 0;
 	private int bombsFlagged = 10;
+	private boolean noClick = false;
 	
 	//Load needed images
 	private ImageIcon blank = new javax.swing.ImageIcon(getClass().getResource("images/blank.gif"));
@@ -128,34 +129,38 @@ public class Minefield extends JPanel {
 				
 				buttons[row][col].addMouseListener(new java.awt.event.MouseAdapter() {
 					public void mousePressed(java.awt.event.MouseEvent e) {
-						face.setIcon(faceOoh);
-						if (e.getModifiers() == InputEvent.BUTTON3_MASK) {
-							rightClick = true;
-						} else if (e.getModifiers() == InputEvent.BUTTON1_MASK) {
-							leftClick = true;
+						if (!noClick) {
+							face.setIcon(faceOoh);
+							if (e.getModifiers() == InputEvent.BUTTON3_MASK) {
+								rightClick = true;
+							} else if (e.getModifiers() == InputEvent.BUTTON1_MASK) {
+								leftClick = true;
+							}
 						}
 					}
 					public void mouseReleased(java.awt.event.MouseEvent e) {
-						face.setIcon(faceSmile);
-						if (rightClick && leftClick) {
-							doubleClick(e);
-							rightClick = false;
-							leftClick = false;
-						} else if (e.getModifiers() == InputEvent.BUTTON3_MASK) {
-							if (gameStarted == true) {
-								markCell(e);
+						if (!noClick) {
+							face.setIcon(faceSmile);
+							if (rightClick && leftClick) {
+								doubleClick(e);
+								rightClick = false;
+								leftClick = false;
+							} else if (e.getModifiers() == InputEvent.BUTTON3_MASK) {
+								if (gameStarted == true) {
+									markCell(e);
+								}
+								rightClick = false;
+							} else if (e.getModifiers() == InputEvent.BUTTON1_MASK) {
+								if (gameStarted == false) {
+									startGame(e);
+								}
+								openCell(e);
+								openAllMarked();
+								leftClick = false;
 							}
-							rightClick = false;
-						} else if (e.getModifiers() == InputEvent.BUTTON1_MASK) {
-							if (gameStarted == false) {
-								startGame(e);
+							if (openCells + BOMB_AMOUNT == maxCells) {
+								win();
 							}
-							openCell(e);
-							openAllMarked();
-							leftClick = false;
-						}
-						if (openCells + BOMB_AMOUNT == maxCells) {
-							win();
 						}
 					}
 				});
@@ -281,6 +286,7 @@ public class Minefield extends JPanel {
 				shown[row][col] = false;
 			}
 		}
+		noClick = false;
 	}
 	
 	//Updates the timer
@@ -491,6 +497,7 @@ public class Minefield extends JPanel {
 	
 	//Handles death, shows clicked bomb, misflagged bombs, and all other bombs
 	private void death(int row, int col) {
+		noClick = true;
 		face.setIcon(faceDead);
 		timer.stop();
 		gameStarted = false;
