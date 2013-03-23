@@ -179,6 +179,7 @@ public class Minefield extends JPanel {
 		this.setVisible(true);
 	}
 	
+	//Sets up border
 	private void setUpBorder() {		
 		//Sets the JPanel to use GridBagLayout
 		border = new JPanel();
@@ -195,6 +196,7 @@ public class Minefield extends JPanel {
 		}
 	}
 	
+	//Sets up control panel
 	private void setUpControls() {
 		//Sets JPanel to use GridBagLayout
 		controlPanel = new JPanel();

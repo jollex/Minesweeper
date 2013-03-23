@@ -10,11 +10,19 @@ public class Screen extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 	
-	//Panels are created for each border
+	//Panels are created for each component
+	private JPanel buttons;
+	
+	private JPanel main;
 	private JPanel topBorder;
 	private JPanel leftBorder;
 	private JPanel rightBorder;
 	private JPanel bottomBorder;
+	
+	//JLabels for each difficulty button
+	private JLabel easy;
+	private JLabel mid;
+	private JLabel hard;
 	
 	//All border images are loaded
 	private ImageIcon bordertl = new javax.swing.ImageIcon(getClass().getResource("images/bordertl.gif"));
@@ -26,12 +34,40 @@ public class Screen extends JFrame {
 	private ImageIcon borderjointr = new javax.swing.ImageIcon(getClass().getResource("images/borderjointr.gif"));
 	private ImageIcon borderbl = new javax.swing.ImageIcon(getClass().getResource("images/borderbl.gif"));
 	private ImageIcon borderbr = new javax.swing.ImageIcon(getClass().getResource("images/borderbr.gif"));
+	private ImageIcon button = new javax.swing.ImageIcon(getClass().getResource("images/button.gif"));
+	private ImageIcon buttonpressed = new javax.swing.ImageIcon(getClass().getResource("images/buttonpressed.gif"));
 	
 	//Creates frame
 	public Screen() {
 		super("Minesweeper");
+		setUpButtons();
 		setUpBorders();
 		setUp();
+	}
+	
+	//Creates difficulty button layout
+	private void setUpButtons() {
+		//Sets up buttons panel
+		buttons = new JPanel();
+		buttons.setSize(148, 24);
+		
+		easy = new JLabel(buttonpressed);
+		easy.setText("Easy");
+		easy.setIconTextGap(-38);
+		easy.setBorder(BorderFactory.createEmptyBorder());
+		buttons.add(easy);
+		
+		mid = new JLabel(button);
+		mid.setText("Mid");
+		mid.setIconTextGap(-36);
+		mid.setBorder(BorderFactory.createEmptyBorder());
+		buttons.add(mid);
+		
+		hard = new JLabel(button);
+		hard.setText("Hard");
+		hard.setIconTextGap(-38);
+		hard.setBorder(BorderFactory.createEmptyBorder());
+		buttons.add(hard);
 	}
 	
 	//Creates all borders
@@ -109,25 +145,33 @@ public class Screen extends JFrame {
 	private void setUp() {
 		//Sets up frame
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
-		this.setSize(148, 206);
+		this.setSize(148, 230);
 		this.setBackground(Color.RED);
 		this.setResizable(false);
 		
+		//Sets up main panel
+		main = new JPanel();
+		main.setSize(148, 206);
+		
 		//Adds top border to frame
-		this.add(topBorder, BorderLayout.PAGE_START);
+		main.add(topBorder, BorderLayout.PAGE_START);
 		
 		//Adds left border to frame
-		this.add(leftBorder, BorderLayout.LINE_START);
+		main.add(leftBorder, BorderLayout.LINE_START);
 		
 		//Adds the minefield panel to the frame
 		Minefield field = new Minefield();
-		this.add(field, BorderLayout.CENTER);
+		main.add(field, BorderLayout.CENTER);
 		
 		//Adds right border to frame
-		this.add(rightBorder, BorderLayout.LINE_END);
+		main.add(rightBorder, BorderLayout.LINE_END);
 		
 		//Adds bottom border to frame
-		this.add(bottomBorder, BorderLayout.PAGE_END);
+		main.add(bottomBorder, BorderLayout.PAGE_END);
+		
+		//Adds main and button panels to frame
+		this.add(buttons, BorderLayout.PAGE_START);
+		this.add(main, BorderLayout.PAGE_END);
 		
 		this.setVisible(true);
 	}
