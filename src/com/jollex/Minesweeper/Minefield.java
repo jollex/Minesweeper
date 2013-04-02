@@ -23,14 +23,14 @@ public class Minefield extends JPanel {
 	
 	//Game settings
 	private int rows = 8, cols = 8;
-	private final int BOMB_AMOUNT = 10;
+	private int bombAmount = 10;
 	
 	//All cell related arrays
-	private JLabel buttons[][] = new JLabel[rows][cols];
-	private boolean[][] bomb = new boolean[rows][cols];
-	private boolean shown[][] = new boolean[rows][cols];
-	private boolean marked[][] = new boolean[rows][cols];
-	private boolean flagged[][] = new boolean[rows][cols];
+	private JLabel buttons[][];
+	private boolean bomb[][];
+	private boolean shown[][];
+	private boolean marked[][];
+	private boolean flagged[][];
 
 	//Variables needed during gameplay
 	private boolean gameStarted = false;
@@ -64,7 +64,17 @@ public class Minefield extends JPanel {
 	private JButton face;
 
 	//Creates the main game area
-	public Minefield() {
+	public Minefield(int x, int y, int bombs) {
+		rows = x;
+		cols = y;
+		bombAmount = bombs;
+		
+		buttons = new JLabel[rows][cols];
+		bomb = new boolean[rows][cols];
+		shown = new boolean[rows][cols];
+		marked = new boolean[rows][cols];
+		flagged = new boolean[rows][cols];
+		
 		//Sets size of the main game area
 		this.setSize(128, 164);
 		
@@ -158,7 +168,7 @@ public class Minefield extends JPanel {
 								openAllMarked();
 								leftClick = false;
 							}
-							if (openCells + BOMB_AMOUNT == maxCells) {
+							if (openCells + bombAmount == maxCells) {
 								win();
 							}
 						}
@@ -190,7 +200,7 @@ public class Minefield extends JPanel {
 		
 		//Adds border pieces to make complete border
 		borderConstraints.gridy = 0;
-		for (int i = 0; i < 32; i++) {
+		for (int i = 0; i < rows; i++) {
 			borderConstraints.gridx = i;
 			border.add(new JLabel(bordertb), borderConstraints);
 		}
@@ -277,8 +287,8 @@ public class Minefield extends JPanel {
 	public void newGame() {
 		face.setIcon(faceSmile);
 		openCells = 0;
-		bombsFlagged = BOMB_AMOUNT;
-		setCounter(BOMB_AMOUNT);
+		bombsFlagged = bombAmount;
+		setCounter(bombAmount);
 		for (int row = 0; row < rows; row++) {
 			for (int col = 0; col < cols; col++) {
 				buttons[row][col].setIcon(blank);
@@ -342,7 +352,7 @@ public class Minefield extends JPanel {
 		Random generator = new Random();
 		int bombs = 0;
 		
-		while (bombs < BOMB_AMOUNT) {
+		while (bombs < bombAmount) {
 			int r = generator.nextInt(rows);
 			int c = generator.nextInt(cols);
 			
