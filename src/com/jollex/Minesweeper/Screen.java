@@ -1,10 +1,8 @@
 package com.jollex.Minesweeper;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-
 import javax.swing.*;
 
 public class Screen extends JFrame {
@@ -14,11 +12,13 @@ public class Screen extends JFrame {
 	//Panels are created for each component
 	private JPanel buttons;
 	
-	private JPanel main;
-	private JPanel topBorder;
-	private JPanel leftBorder;
-	private JPanel rightBorder;
-	private JPanel bottomBorder;
+	private JPanel game = new JPanel();
+	private JPanel main = new JPanel();
+	private JPanel topBorder = new JPanel();
+	private JPanel leftBorder = new JPanel();
+	private JPanel rightBorder = new JPanel();
+	private JPanel bottomBorder = new JPanel();
+	private JPanel middleComps = new JPanel();
 	
 	//JLabels for each difficulty button
 	private JLabel easy;
@@ -30,7 +30,7 @@ public class Screen extends JFrame {
 	private ImageIcon bordertb = new javax.swing.ImageIcon(getClass().getResource("images/bordertb.gif"));
 	private ImageIcon bordertr = new javax.swing.ImageIcon(getClass().getResource("images/bordertr.gif"));
 	private ImageIcon borderlr = new javax.swing.ImageIcon(getClass().getResource("images/borderlr.gif"));
-	private ImageIcon borderlr33 = new javax.swing.ImageIcon(getClass().getResource("images/borderlr33.gif"));
+	private ImageIcon borderlr26 = new javax.swing.ImageIcon(getClass().getResource("images/borderlr26.gif"));
 	private ImageIcon borderjointl = new javax.swing.ImageIcon(getClass().getResource("images/borderjointl.gif"));
 	private ImageIcon borderjointr = new javax.swing.ImageIcon(getClass().getResource("images/borderjointr.gif"));
 	private ImageIcon borderbl = new javax.swing.ImageIcon(getClass().getResource("images/borderbl.gif"));
@@ -129,7 +129,7 @@ public class Screen extends JFrame {
 	//Creates all borders
 	private void setUpBorders(int x, int y) {
 		//Set up top border
-		topBorder = new JPanel();
+		topBorder.removeAll();
 		GridBagLayout top = new GridBagLayout();
 		GridBagConstraints t = new GridBagConstraints();
 		topBorder.setLayout(top);
@@ -143,12 +143,12 @@ public class Screen extends JFrame {
 		topBorder.add(new JLabel(bordertr), t);
 		
 		//Set up left border
-		leftBorder = new JPanel();
+		leftBorder.removeAll();
 		GridBagLayout left = new GridBagLayout();
 		GridBagConstraints l = new GridBagConstraints();
 		leftBorder.setLayout(left);
 		l.gridy = 0;
-		leftBorder.add(new JLabel(borderlr33), l);
+		leftBorder.add(new JLabel(borderlr26), l);
 		l.gridy = 1;
 		leftBorder.add(new JLabel(borderjointl), l);
 		for (int i = 2; i <= y + 1; i++) {
@@ -157,12 +157,12 @@ public class Screen extends JFrame {
 		}
 		
 		//Set up right border
-		rightBorder = new JPanel();
+		rightBorder.removeAll();
 		GridBagLayout right = new GridBagLayout();
 		GridBagConstraints r = new GridBagConstraints();
 		rightBorder.setLayout(right);
 		r.gridy = 0;
-		rightBorder.add(new JLabel(borderlr33), r);
+		rightBorder.add(new JLabel(borderlr26), r);
 		r.gridy = 1;
 		rightBorder.add(new JLabel(borderjointr), r);
 		for (int i = 2; i <= y + 1; i++) {
@@ -171,7 +171,7 @@ public class Screen extends JFrame {
 		}
 		
 		//Set up bottom order
-		bottomBorder = new JPanel();
+		bottomBorder.removeAll();
 		GridBagLayout bottom = new GridBagLayout();
 		GridBagConstraints b = new GridBagConstraints();
 		bottomBorder.setLayout(bottom);
@@ -189,34 +189,43 @@ public class Screen extends JFrame {
 	private void setUp(int x, int y, int bombAmount) {
 		//Sets up frame
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
-		this.setSize(148, 230);
+		this.setSize((x * 16) + 20, (y * 16) + 102);
 		this.setBackground(Color.RED);
-		//this.setResizable(false);
+		this.setResizable(false);
+		
+		game.removeAll();
+		game.setLayout(new BoxLayout(game, BoxLayout.Y_AXIS));
 		
 		//Sets up main panel
-		main = new JPanel();
-		main.setSize(148, 206);
+		main.removeAll();
+		main.setLayout(new BoxLayout(main, BoxLayout.Y_AXIS));
 		
 		//Adds top border to frame
-		main.add(topBorder, BorderLayout.PAGE_START);
+		main.add(topBorder);
+		
+		middleComps.removeAll();
+		middleComps.setLayout(new BoxLayout(middleComps, BoxLayout.X_AXIS));
 		
 		//Adds left border to frame
-		main.add(leftBorder, BorderLayout.LINE_START);
+		middleComps.add(leftBorder);
 		
 		//Adds the minefield panel to the frame
 		Minefield field = new Minefield(x, y, bombAmount);
-		main.add(field, BorderLayout.CENTER);
+		middleComps.add(field);
 		
 		//Adds right border to frame
-		main.add(rightBorder, BorderLayout.LINE_END);
+		middleComps.add(rightBorder);
+		
+		main.add(middleComps);
 		
 		//Adds bottom border to frame
-		main.add(bottomBorder, BorderLayout.PAGE_END);
+		main.add(bottomBorder);
 		
 		//Adds main and button panels to frame
-		this.add(buttons, BorderLayout.PAGE_START);
-		this.add(main, BorderLayout.PAGE_END);
+		game.add(buttons);
+		game.add(main);
 		
+		this.add(game);
 		this.setVisible(true);
 	}
 }

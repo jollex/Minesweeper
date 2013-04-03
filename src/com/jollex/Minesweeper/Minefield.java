@@ -4,6 +4,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.Container;
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.util.Random;
@@ -55,9 +56,11 @@ public class Minefield extends JPanel {
 	private ImageIcon bordertb = new javax.swing.ImageIcon(getClass().getResource("images/bordertb.gif"));
 
 	//Create labels for bomb counter, face, and timer
+	private JPanel bombsPanel;
 	private JLabel bombs1;
 	private JLabel bombs2;
 	private JLabel bombs3;
+	private JPanel timePanel;
 	private JLabel time1;
 	private JLabel time2;
 	private JLabel time3;
@@ -68,6 +71,7 @@ public class Minefield extends JPanel {
 		rows = x;
 		cols = y;
 		bombAmount = bombs;
+		bombsFlagged = bombs;
 		
 		buttons = new JLabel[rows][cols];
 		bomb = new boolean[rows][cols];
@@ -208,33 +212,41 @@ public class Minefield extends JPanel {
 	
 	//Sets up control panel
 	private void setUpControls() {
+		int space = ((rows * 16) - 104) / 2;
+		
 		//Sets JPanel to use GridBagLayout
 		controlPanel = new JPanel();
-		controlPanel.setSize(128, 26);
-		GridBagLayout gridBag2 = new GridBagLayout();
-		GridBagConstraints controls = new GridBagConstraints();
-		controlPanel.setLayout(gridBag2);
+		controlPanel.setSize(rows * 16, 26);
+		controlPanel.setLayout(new BoxLayout(controlPanel, BoxLayout.X_AXIS));
+		
+		bombsPanel = new JPanel();
+		bombsPanel.setLayout(new BoxLayout(bombsPanel, BoxLayout.X_AXIS));
+		timePanel = new JPanel();
+		timePanel.setLayout(new BoxLayout(timePanel, BoxLayout.X_AXIS));
 		
 		//Add bomb counter labels
 		bombs1 = new JLabel();
 		bombs1.setIcon(new javax.swing.ImageIcon(getClass().getResource("images/time0.gif")));
-		controls.gridx = 0;
-		controlPanel.add(bombs1, controls);
+		bombsPanel.add(bombs1);
 
 		bombs2 = new JLabel();
-		bombs2.setIcon(new javax.swing.ImageIcon(getClass().getResource("images/time1.gif")));
-		controls.gridx = 1;
-		controlPanel.add(bombs2, controls);
+		bombs2.setIcon(new javax.swing.ImageIcon(getClass().getResource("images/time0.gif")));
+		bombsPanel.add(bombs2);
 		
 		bombs3 = new JLabel();
 		bombs3.setIcon(new javax.swing.ImageIcon(getClass().getResource("images/time0.gif")));
-		controls.gridx = 2;
-		controlPanel.add(bombs3, controls);
+		bombsPanel.add(bombs3);
+		
+		setCounter(bombsFlagged);
+		
+		controlPanel.add(bombsPanel);
+		
+		controlPanel.add(Box.createRigidArea(new Dimension(space,0)));
 		
 		//Load face button and adds ActionListener to it
 		face = new JButton();
 		face.setIcon(faceSmile);
-		face.setBorder(BorderFactory.createEmptyBorder(0, 12, 0, 12));
+		face.setBorder(BorderFactory.createEmptyBorder());
 		ActionListener faceClick = new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -249,24 +261,24 @@ public class Minefield extends JPanel {
 			}
 		};
 		face.addActionListener(faceClick);
-		controls.gridx = 3;
-		controlPanel.add(face, controls);
+		controlPanel.add(face);
+		
+		controlPanel.add(Box.createRigidArea(new Dimension(space,0)));
 		
 		//Add timer icons
 		time1 = new JLabel();
 		time1.setIcon(new javax.swing.ImageIcon(getClass().getResource("images/time0.gif")));
-		controls.gridx = 4;
-		controlPanel.add(time1, controls);
+		timePanel.add(time1);
 		
 		time2 = new JLabel();
 		time2.setIcon(new javax.swing.ImageIcon(getClass().getResource("images/time0.gif")));
-		controls.gridx = 5;
-		controlPanel.add(time2, controls);
+		timePanel.add(time2);
 		
 		time3 = new JLabel();
 		time3.setIcon(new javax.swing.ImageIcon(getClass().getResource("images/time0.gif")));
-		controls.gridx = 6;
-		controlPanel.add(time3, controls);
+		timePanel.add(time3);
+		
+		controlPanel.add(timePanel);
 		
 		//Sets JFrame to be visible
 		controlPanel.setVisible(true);
